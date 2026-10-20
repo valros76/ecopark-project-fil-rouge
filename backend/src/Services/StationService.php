@@ -43,6 +43,20 @@ class StationService
       );
     }
 
+    public function getAllChargeSessions(): array{
+      $req = $this->pdo->prepare("SELECT station_id, user_name, kwh_requested, created_date FROM charge_sessions ORDER BY id DESC");
+
+      $sessions = $req->fetchAll();
+
+      return array_map(fn($s) => new ChargeSession(
+        id: (int) $s->id,
+        stationId: (int) $s->station_id,
+        userName: (string) $s->user_name,
+        kwhRequested: (int) $s->kwh_requested,
+        createdAt: (string) $s->created_at
+      ), $sessions);
+    }
+
     public function createChargeSession(
       int $stationId,
       string $userName,

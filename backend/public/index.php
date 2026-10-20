@@ -27,15 +27,24 @@ $container = $containerBuilder->build();
 AppFactory::setContainer($container);
 
 $app = AppFactory::create();
+$app->addBodyParsingMiddleware();
 $app->add(new EcoMetricsMiddleware());
 $app->add(new CorsMiddleware);
-$app->addBodyParsingMiddleware();
 
 $app->options("/{routes:.+}", function ($request, $response){
   return $response;
 });
 
+// Stations routes
 $app->get("/api/stations", [StationController::class, "index"]);
+
+// Sessions routes
+$app->get("/api/sessions", [StationController::class, "getSessions"]);
 $app->post("/api/sessions", [StationController::class, "storeSession"]);
+
+/**
+ * Mettre en place sur /api/sessions
+ * Requête GET | DELETE | UPDATE
+ */
 
 $app->run();

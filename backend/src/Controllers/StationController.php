@@ -40,6 +40,36 @@ class StationController
         return $response->withHeader("Content-Type", "application/json")->withStatus(200);
     }
 
+    
+
+    public function getSessions(Request $request, Response $response): Response{
+      $sessions = $this->stationService->getAllChargeSessions();
+
+      $baseUrl = UrlHelper::getBaseUrl($request);
+
+      $data = array_map(fn($s) => [
+          "id" => $s->id,
+          "stationId" => $s->stationId,
+          "userName" => $s->userName,
+          "kwhRequested" => $s->kwhRequested,
+          "createdAt" => $s->createdAt,
+          "_links" => [
+            "self" => [
+              "href" => "{$baseUrl}/api/sessions/{$s->id}",
+              "method" => "GET"
+              ],
+            "add" => [
+              "href" => "{$baseUrl}/api/sessions",
+              "method" => "POST"
+            ]
+          ]
+        ], $sessions);
+
+        $response->getBody()->write(json_encode($data, JSON_UNESCAPED_SLASHES));
+
+        return $response->withHeader("Content-Type", "application/json")->withStatus(200);
+    }
+
     public function storeSession(Request $request, Response $response): Response{
 
       $body = $request->getParsedBody() ?? json_decode($request->getBody()->getContents(), true);
