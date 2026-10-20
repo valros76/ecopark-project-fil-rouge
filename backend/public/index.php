@@ -1,8 +1,41 @@
 <?php
 
+use App\Controllers\StationController;
+use App\Core\Database;
+use App\Middlewares\CorsMiddleware;
+use App\Middlewares\EcoMetricsMiddleware;
+use DI\ContainerBuilder;
+use Dotenv\Dotenv;
+use Slim\Factory\AppFactory;
+
 require_once "../vendor/autoload.php";
 
-use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable("../");
 $dotenv->load();
+
+$containerBuilder = new ContainerBuilder();
+$containerBuilder->useAutowiring(true);
+
+$containerBuilder->addDefinitions([
+  PDO::class => function(){
+    return Database::getInstance();
+  }
+]);
+
+$container = $containerBuilder->build();
+AppFactory::setContainer($container);
+
+$app = AppFactory::create();
+$app->add(new EcoMetricsMiddleware());
+$app->add(new CorsMiddleware);
+$app->addBodyParsingMiddleware();
+
+$app->options("/{routes:.+}", function ($request, $response){
+  return $response;
+});
+
+$app->get("/api/stations", [StationController::class, "index"]);
+$app->post("/api/sessions", [StationController::class, "storeSession"]);
+
+$app->run();

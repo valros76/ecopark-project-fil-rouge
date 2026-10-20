@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Services\StationService;
+use App\Responses\ProblemDetailsResponse;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
@@ -52,7 +53,7 @@ class StationController
           response: $response, 
           status: 400, 
           title: "Validation Error", 
-          description: "Les champs stationId, userName et kwhRequested sont requis."
+          detail: "Les champs stationId, userName et kwhRequested sont requis."
           );
       }
 
@@ -63,7 +64,7 @@ class StationController
           response: $response,
           status:404,
           title: "Station Not Found",
-          description: "La borne de recharge demandée n'existe pas."
+          detail: "La borne de recharge demandée n'existe pas."
         );
       }
 
@@ -72,7 +73,7 @@ class StationController
           response: $response,
           status: 429,
           title: "Power Exceeded",
-          description: "La puissance demandée ({$body['kwhRequested']} kWh) dépasse la limite de la borne ({$station->powerKw} kW)."
+          detail: "La puissance demandée ({$body['kwhRequested']} kWh) dépasse la limite de la borne ({$station->powerKw} kW)."
         );
       }
 
