@@ -148,6 +148,9 @@ vite.config.ts.timestamp-*
 # Turbo Repo
 .turbo
 
+# vendor
+backend/vendor
+
 # env files
 .env
 .env.development
