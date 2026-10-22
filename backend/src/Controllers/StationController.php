@@ -24,7 +24,7 @@ class StationController
 
         $data = array_map(fn($s) => [
           "id" => $s->id,
-          "location_name" => $s->locationName,
+          "locationName" => $s->locationName,
           "powerKw" => $s->powerKw,
           "isAvailable" => $s->isAvailable,
           "_links" => [
